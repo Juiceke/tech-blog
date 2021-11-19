@@ -4,7 +4,9 @@ const {User, Comment, Post} = require("../../models")
 // get all users
 router.get("/", (req, res) => {
     console.log("======================");
-    User.findAll()
+    User.findAll({
+        attributes: { exclude: ['password']}
+    })
       .then((PostData) => {
         res.json({ PostData });
       })
@@ -15,10 +17,29 @@ router.get("/", (req, res) => {
 });
 
 router.get("/:id", (req, res) => {
-    User.findOne({})
+    User.findOne({
+        attributes: { exclude: ['password'] },
+        where: {
+            id: req.params.id
+        },
+        include: [
+            {
+                model: Post,
+                attributes: ['id', 'title', 'post_url', 'created_at']
+            },
+            {
+                model: Comment,
+                attributes: ['id', 'comment_text', 'created_at'],
+                include: {
+                  model: Post,
+                  attributes: ['title']
+            }
+        },
+        ]
+    })
       .then((dbPostData) => {
         if (!dbPostData) {
-          res.status(404).json({ message: "No post found with this id" });
+          res.status(404).json({ message: "No user found with this id" });
           return;
         }
         res.json(dbPostData);
@@ -67,28 +88,45 @@ router.get("/:id", (req, res) => {
           const validPassword = dbUserData.checkPassword(req.body.password);
 
           if (!validPassword) {
-              res.status(400).json({ message: 'Incorrect password!'})
+              res.status(400).json({ message: 'Incorrect password!'});
+              return;
           }
-      })
-  })
+
+          req.session.save(() => {
+              // save id and username from the data posted, then make loggedIn true.
+              req.session.user_id = dbUserData.id;
+              req.session.username = dbUserData.username;
+              req.session.loggedIn = true;
+
+              res.json({ user: dbUserData, message: 'You are now logged in!'});
+          });
+      });
+  });
   
+  router.post('/logout', (req, res) => {
+      if (req.session.loggedIn) {
+          req.session.destroy(() => {
+              res.status(204).end();
+          });
+      }
+      else {
+          res.status(404).end();
+      }
+  });
+
   router.put("/:id", (req, res) => {
-    Post.update(
-      {
-        title: req.body.title,
-      },
-      {
+    User.update( req.body, {
+        individualHooks: true,
         where: {
           id: req.params.id,
         },
-      }
-    )
-      .then((dbPostData) => {
-        if (!dbPostData) {
-          res.status(404).json({ message: "No post found with this id" });
+    })
+      .then((dbUserData) => {
+        if (!dbUserData) {
+          res.status(404).json({ message: "No user found with this id" });
           return;
         }
-        res.json(dbPostData);
+        res.json(dbUserData);
       })
       .catch((err) => {
         console.log(err);
@@ -98,14 +136,14 @@ router.get("/:id", (req, res) => {
   
   router.delete("/:id", (req, res) => {
     console.log("id", req.params.id);
-    Post.destroy({
+    User.destroy({
       where: {
         id: req.params.id,
       },
     })
       .then((dbPostData) => {
         if (!dbPostData) {
-          res.status(404).json({ message: "No post found with this id" });
+          res.status(404).json({ message: "No user found with this id" });
           return;
         }
         res.json(dbPostData);
@@ -115,8 +153,5 @@ router.get("/:id", (req, res) => {
         res.status(500).json(err);
       });
   });
-  
-  module.exports = router;
-  
 
 module.exports = router;

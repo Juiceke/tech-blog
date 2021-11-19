@@ -6,8 +6,8 @@ const { Post, User, Comment } = require("../../models");
 router.get("/", (req, res) => {
   console.log("======================");
   Comment.findAll()
-    .then((PostData) => {
-      res.json({ PostData });
+    .then((CommentData) => {
+      res.json( CommentData );
     })
     .catch((err) => {
       console.log(err);
@@ -15,87 +15,34 @@ router.get("/", (req, res) => {
     });
 });
 
-router.get("/:id", (req, res) => {
-  Post.findOne({})
-    .then((dbPostData) => {
-      if (!dbPostData) {
-        res.status(404).json({ message: "No post found with this id" });
-        return;
-      }
-      res.json(dbPostData);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json(err);
-    });
-});
-
-router.post("/", (req, res) => {
-  // expects {title: 'Taskmaster goes public!', post_url: 'https://taskmaster.com/press', user_id: 1}
-  Post.create({
-    title: req.body.title,
-    post_url: req.body.post_url,
+router.post('/', withAuth, (req, res) => {
+  // expects => {comment_text: "This is the comment", user_id: 1, post_id: 2}
+  Comment.create({
+    comment_text: req.body.comment_text,
     user_id: req.session.user_id,
+    post_id: req.body.post_id
   })
-    .then((dbPostData) => res.json(dbPostData))
-    .catch((err) => {
+    .then(dbCommentData => res.json(dbCommentData))
+    .catch(err => {
       console.log(err);
-      res.status(500).json(err);
+      res.status(400).json(err);
     });
 });
 
-router.put("/upvote", (req, res) => {
-  // custom static method created in models/Post.js
-  Post.upvote(
-    { ...req.body, user_id: req.session.user_id },
-    { Vote, Comment, User }
-  )
-    .then((updatedVoteData) => res.json(updatedVoteData))
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json(err);
-    });
-});
-
-router.put("/:id", (req, res) => {
-  Post.update(
-    {
-      title: req.body.title,
-    },
-    {
-      where: {
-        id: req.params.id,
-      },
-    }
-  )
-    .then((dbPostData) => {
-      if (!dbPostData) {
-        res.status(404).json({ message: "No post found with this id" });
-        return;
-      }
-      res.json(dbPostData);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.status(500).json(err);
-    });
-});
-
-router.delete("/:id", (req, res) => {
-  console.log("id", req.params.id);
-  Post.destroy({
+router.delete('/:id', withAuth, (req, res) => {
+  Comment.destroy({
     where: {
-      id: req.params.id,
-    },
+      id: req.params.id
+    }
   })
-    .then((dbPostData) => {
-      if (!dbPostData) {
-        res.status(404).json({ message: "No post found with this id" });
+    .then(dbCommentData => {
+      if (!dbCommentData) {
+        res.status(404).json({ message: 'No comment found with this id!' });
         return;
       }
-      res.json(dbPostData);
+      res.json(dbCommentData);
     })
-    .catch((err) => {
+    .catch(err => {
       console.log(err);
       res.status(500).json(err);
     });
