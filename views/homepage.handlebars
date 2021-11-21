@@ -1,4 +1,19 @@
-Something about how great mvc is will go here later. woah
-{{#each posts.comments}}
-  <span>{{comment_text}}</span>
-{{/each}}
+<ol class="post-list">
+  {{#each posts }}
+  <li>
+    <article class="post">
+  <div class="title">
+    {{title}}
+  </div>
+  <div class="body">
+    {{post_body}}
+  </div>
+  <div class="meta">
+    by {{user.username}} on {{format_date created_at}}
+    |
+    <a href="/post/{{id}}">{{comments.length}} {{format_plural "comment" comments.length}}</a>
+  </div>
+</article>
+  </li>
+  {{/each}}
+</ol>

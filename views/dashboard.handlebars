@@ -1,12 +1,25 @@
-<ol class="post-list">
-  <li>
-    <article class="post">
-      <div class="title">
-        Example Post! You can click me at a later date to be taken to the post!
-      </div>
-      <div class="meta">
-        Some kind of vote system. | comments!
-      </div>
-    </article>
-  </li>
-</ol>
+{{#if posts.length}}
+<section>
+  <h2>Your Posts</h2>
+  <ol>
+    {{#each posts}}
+    <li>
+      <article class="post">
+  <div class="title">
+    {{title}}
+  </div>
+  <div class="body">
+    {{post_body}}
+  </div>
+  <div class="meta">
+    by {{user.username}} on {{format_date created_at}}
+    |
+    <a href="/post/{{id}}">{{comments.length}} {{format_plural "comment" comments.length}}</a>
+  </div>
+</article>
+      <a href="/dashboard/edit/{{id}}" class="edit-link">Edit post</a>
+    </li>
+    {{/each}}
+  </ol>
+</section>
+{{/if}}

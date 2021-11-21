@@ -8,7 +8,7 @@ router.get("/", (req, res) => {
   Post.findAll({
     attributes: [
       'id',
-      'post_url',
+      'post_body',
       'title',
       'created_at'
     ],
@@ -45,7 +45,7 @@ router.get('/post/:id', (req, res) => {
     },
     attributes: [
       "id",
-      "post_url",
+      "post_body",
       "title",
       "created_at"
     ],
@@ -65,9 +65,10 @@ router.get('/post/:id', (req, res) => {
     ]
   }).then(postData => {
     const post = postData.get({ plain:true });
-    console.log(req.session)
-    res.render("single-post", { post,
-    loggedIn: req.session.loggedIn })
+    res.render("single-post", { 
+    post,
+    loggedIn: req.session.loggedIn 
+  })
   })
   .catch(err => {
     console.log(err);
@@ -83,7 +84,9 @@ router.get("/login", (req, res) => {
   res.render("login");
 });
 
-router.get("/dashboard", (req, res) => {
-  res.render("dashboard");
-});
+router.get("/CreatePost", (req, res) => {
+  res.render("CreatePost", {
+    loggedIn: req.session.loggedIn
+  })
+})
 module.exports = router;

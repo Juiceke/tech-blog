@@ -2,7 +2,7 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Page Title</title>
+    <title>MyTechBlog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link
       rel="stylesheet"
@@ -20,9 +20,11 @@
       <nav>
         {{#if loggedIn}}
         <button id="logout" class="btn">logout</button>
-        {{/if}}
-        <a href="/login">login</a>
         <a href="/dashboard">dashboard</a>
+        <a href="/CreatePost">Create</a>
+        {{else}}
+        <a href="/login">login</a>
+        {{/if}}
       </nav>
     </header>
     <main>

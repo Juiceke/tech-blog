@@ -25,7 +25,7 @@ router.get("/:id", (req, res) => {
         include: [
             {
                 model: Post,
-                attributes: ['id', 'title', 'post_url', 'created_at']
+                attributes: ['id', 'title', 'post_body', 'created_at']
             },
             {
                 model: Comment,
@@ -51,7 +51,6 @@ router.get("/:id", (req, res) => {
   });
   
   router.post("/", (req, res) => {
-    // expects {title: 'Taskmaster goes public!', post_url: 'https://taskmaster.com/press', user_id: 1}
     User.create({
       username: req.body.username,
       email: req.body.email,
