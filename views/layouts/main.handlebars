@@ -18,7 +18,9 @@
         <a href="/">My Tech Blog!</a>
       </h1>
       <nav>
+        {{#if loggedIn}}
         <button id="logout" class="btn">logout</button>
+        {{/if}}
         <a href="/login">login</a>
         <a href="/dashboard">dashboard</a>
       </nav>
@@ -29,5 +31,8 @@
     <footer>
       Thanks for visiting!
     </footer>
+    {{#if loggedIn}}
+    <script src="/javascript/logout.js"></script>
+    {{/if}}
   </body>
 </html>

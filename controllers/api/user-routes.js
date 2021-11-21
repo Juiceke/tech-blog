@@ -7,8 +7,8 @@ router.get("/", (req, res) => {
     User.findAll({
         attributes: { exclude: ['password']}
     })
-      .then((PostData) => {
-        res.json({ PostData });
+      .then((userData) => {
+        res.json({ userData });
       })
       .catch((err) => {
         console.log(err);
