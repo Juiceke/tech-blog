@@ -1,1 +1,1 @@
-web: source db/schema.sql node server.js
+web: node server.js
